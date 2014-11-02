@@ -48,7 +48,7 @@ class Robot
     @Response  = Response
     @commands  = []
     @listeners = []
-    @middleware = []
+    @middleware = {listener:[]}
     @logger    = new Log process.env.HUBOT_LOG_LEVEL or 'info'
     @pingIntervalId = null
 
@@ -214,8 +214,8 @@ class Robot
   #              no arguments.
   #
   # Returns nothing.
-  addListenerMiddleware: (middleware) ->
-    @middleware.push middleware
+  listenerMiddleware: (middleware) ->
+    @middleware.listener.push middleware
     return undefined
 
   # Public: Passes the given message to any interested Listeners.
