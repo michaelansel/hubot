@@ -636,6 +636,35 @@ These scoped identifiers allow you to externally specify new behaviors like:
 - authorization policy: "allow everyone in the `annoyers` group to execute `annoyance.*` commands"
 - rate limiting: "only allow executing `annoyance.start` once every 30 minutes"
 
+## Fetching Listeners
+
+It is sometimes useful to retrieve a specific Listener (e.g. for unit testing). Listeners can be retrieved by their `id` attribute using `robot.listenerById`. Listener IDs are assumed to be unique, so only the first matching listener is returned if there are multiple matches.
+
+A unit testing example:
+
+The script:
+```coffeescript
+module.exports = (robot) ->
+  robot.respond /who is oncall?/, id: 'get-room-oncall', (response) ->
+    # it does stuff
+```
+
+The test:
+```coffeescript
+describe 'listener "get-room-oncall"', ->
+  it 'should match "who is oncall?"', (testDone) ->
+    listener = @robot.listenerById 'get-room-oncall'
+
+    # Stub out the real work; just testing the match
+    listener.callback = sinon.stub() # private API
+
+    testMessage = new TextMessage @user, "TestHubot: who is oncall?"
+
+    listener.call testMessage, (result) -> # private API
+      expect(result).to.be.ok
+      testDone()
+```
+
 # Middleware
 
 Hubot supports injecting arbitrary code in between the listener match and execute steps. This allows you to create very interesting extensions that apply to all scripts. Examples include centralized authorization policies, rate limiting, logging, and metrics. Middleware is implemented just like any other hubot script, however instead of using the `hear` and `respond` methods, middleware is registered using `listenerMiddleware`.

@@ -11,6 +11,7 @@ mockery = require 'mockery'
 Robot = require '../src/robot.coffee'
 { CatchAllMessage, EnterMessage, TextMessage } = require '../src/message'
 Adapter = require '../src/adapter'
+{ Listener } = require '../src/listener'
 
 # Preload the Hubot mock adapter but substitute in the latest version of Adapter
 mockery.enable()
@@ -156,6 +157,25 @@ describe 'Robot', ->
           expect(@robot.emit).to.have.been.called
           expect(goodListenerCalled).to.be.ok
           done()
+
+    describe '#listenerById', ->
+      beforeEach ->
+        # Mock the relevant fields
+        @testListener = options: id: 'test-listener'
+
+      it 'finds a listener with the given ID', ->
+        @robot.listeners = [ @testListener ]
+        expect(@robot.listenerById 'test-listener').to.be.equal(@testListener)
+
+      it 'returns null if no listener found', ->
+        @robot.listeners = [ @testListener ]
+        expect(@robot.listenerById 'fake-listener').to.be.null
+
+      it 'picks the first listener if multiple listeners found', ->
+        # Add an extra field to make debugging a failing test easier
+        @testListenerB = options: { id: 'test-listener', 'this-is': 'listener-b' }
+        @robot.listeners = [ @testListener, @testListenerB ]
+        expect(@robot.listenerById 'test-listener').to.be.equal(@testListener)
 
   describe 'Message Processing', ->
     it 'calls a matching listener', (done) ->
