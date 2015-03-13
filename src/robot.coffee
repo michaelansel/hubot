@@ -239,6 +239,7 @@ class Robot
   #     executed middleware.
   #
   # Returns nothing
+  # Returns before executing any middleware
   executeMiddleware: (whichMiddleware, context, next, done) ->
     if not @middleware.hasOwnProperty whichMiddleware
       throw new Error "Invalid middleware set: \"#{whichMiddleware}\""
@@ -265,7 +266,8 @@ class Robot
 
     # Execute each piece of middleware, collecting the latest 'done' callback
     # at each step.
-    async.reduce(allMiddleware, done, executeMiddleware, allDone)
+    process.nextTick ->
+      async.reduce(allMiddleware, done, executeMiddleware, allDone)
 
   # Public: Passes the given message to any interested Listeners.
   #
@@ -275,6 +277,7 @@ class Robot
   # cb - Optional callback that is called when message processing is complete
   #
   # Returns nothing.
+  # Returns before executing callback
   receive: (message, cb) ->
     # Try executing all registered Listeners in order of registration
     # and return after message is done being processed
@@ -301,7 +304,7 @@ class Robot
           @logger.debug 'No listeners executed; falling back to catch-all'
           @receive new CatchAllMessage(message), cb
         else
-          cb() if cb?
+          process.nextTick cb if cb?
     )
 
 
