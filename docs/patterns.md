@@ -89,6 +89,7 @@ The key deciding factors for selectively allowing vs restricting listeners are t
 * Selectively restricting listeners (listeners A, B, C are power commands, everything else is a normal command) is a less secure method (new listeners are put into the normal category by default, which could give unexpected access; external scripts are particularly scary here), but has a lower maintenance overhead (no need to modify/enumerate all the fun/culture scripts in your access policy).
 
 As an additional consideration, most scripts do not currently have listener IDs, so you will likely need to open PRs (or fork) any external scripts you use to add listener IDs. The actual modification is easy, but coordinating with lots of maintainers can be time consuming.
+THERE SHOULD BE LINKS AND STUFF HERE
 
 Once you have decided which of the four possible models to follow, you need to build the appropriate lists of users and listeners to plug into your authorization middleware.
 
