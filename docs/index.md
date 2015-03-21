@@ -1,4 +1,8 @@
-# Hubot
+---
+title: Hubot
+permalink: /docs/index.html
+layout: docs
+---
 
 ## Getting Started With Hubot
 
@@ -11,7 +15,7 @@ Once node and npm are ready, we can install the hubot generator:
 
 This will give us the `hubot` [yeoman](http://yeoman.io/) generator. Now we
 can make a new directory, and generate a new instance of hubot in it. For example, if
-we wanted to make a bot called bender:
+we wanted to make a bot called myhubot:
 
 
     % mkdir myhubot
@@ -19,7 +23,7 @@ we wanted to make a bot called bender:
     % yo hubot
 
 At this point, you'll be asked a few questions about who is creating the bot,
-and which [adapter](adapters.md) you'll be using. Adapters are hubot's way of
+and which [adapter](/docs/adapters/) you'll be using. Adapters are hubot's way of
 integrating with different chat providers.
 
 If you are using git, the generated directory includes a .gitignore, so you can
@@ -29,15 +33,29 @@ initialize and add everything:
     % git add .
     % git commit -m "Initial commit"
 
+If you'd prefer to automate your hubot build without being interactively
+prompted for its configuration, you can add the following options
+to the `yo hubot` command to do so:
+
+| Option                                      | Description
+| ------------------------------------------- | -----------------------------------------------------
+| `--owner="Bot Wrangler <bw@example.com>"`   | Bot owner, e.g. "Bot Wrangler <bw@example.com>"
+| `--name="Hubot"`                            | Bot name, e.g. "Hubot"
+| `--description="Delightfully aware robutt"` | Bot description, e.g. "Delightfully aware robutt"
+| `--adapter=campfire`                        | Bot adapter, e.g. "campfire"
+| `--defaults`                                | Declare all defaults are set and no prompting required
+
 You now have your own functional hubot! There's a `bin/hubot`
 command for convenience, to handle installing npm dependencies, loading scripts,
 and then launching your hubot.
 
+Hubot needs Redis to persist data, so before you can start hubot on your own computer, you should have Redis installed on your localhost. If just want to test Hubot without Redis, then you can remove `redis-brain.coffee` from `hubot-scripts.json`.
+
     % bin/hubot
     Hubot>
 
-This starts hubot using the [shell adapter](adapters/shell.md), which
-is mostly useful for development. Make note of  `Hubot>`; this is the name he'll
+This starts hubot using the [shell adapter](/docs/adapters/shell/), which
+is mostly useful for development. Make note of  `Hubot>`; this is the name your hubot will
 `respond` to with commands. For example, to list available commands:
 
     % bin/hubot
@@ -69,7 +87,7 @@ is mostly useful for development. Make note of  `Hubot>`; this is the name he'll
     hubot pug me - Receive a pug
     hubot ship it - Display a motivation squirrel
 
-You almost definitely will want to change his name to give him some more character. bin/hubot takes a `--name`:
+You almost definitely will want to change your hubot's name to add character. bin/hubot takes a `--name`:
 
     % bin/hubot --name myhubot
     myhubot>
@@ -104,7 +122,7 @@ name as a double quoted string to the `external-scripts.json` file in this repo.
 
 ## Adapters
 
-Hubot uses the adapter pattern to support multiple chat-backends. Read available adapters in [docs/adapters.md](adapters.md), along with how to configure them.
+Hubot uses the adapter pattern to support multiple chat-backends. Here is a [list of available adaptesr](/docs/adapters/), along with details on how to configure them.
 
 ## Deploying
 
@@ -112,10 +130,10 @@ You can deploy hubot to Heroku, which is the officially supported method.
 Additionally you are able to deploy hubot to a UNIX-like system or Windows.
 Please note the support for deploying to Windows isn't officially supported.
 
-* [Deploying Hubot onto Heroku](deploying/heroku.md)
-* [Deploying Hubot onto UNIX](deploying/unix.md)
-* [Deploying Hubot onto Windows](deploying/windows.md)
+* [Deploying Hubot onto Heroku](/docs/deploying/heroku/)
+* [Deploying Hubot onto UNIX](/docs/deploying/unix/)
+* [Deploying Hubot onto Windows](/docs/deploying/windows/)
 
 ## Patterns
 
-Using custom scripts, you can quickly customize Hubot to be the most life embettering robot he can be. Read [docs/patterns.md](patterns.md) for some nifty tricks that may come in handy as you teach him new skills.
+Using custom scripts, you can quickly customize Hubot to be the most life embettering robot he or she can be. Read [docs/patterns.md](/docs/patterns/) for some nifty tricks that may come in handy as you teach your hubot new skills.
