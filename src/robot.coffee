@@ -122,37 +122,46 @@ class Robot
 
   # Public: Adds a Listener that triggers when anyone enters the room.
   #
+  # options  - An Object of additional parameters keyed on extension name
+  #            (optional).
   # callback - A Function that is called with a Response object.
   #
   # Returns nothing.
-  enter: (callback) ->
+  enter: (options, callback) ->
     @listeners.push new Listener(
       @,
       ((msg) -> msg instanceof EnterMessage),
+      options,
       callback
     )
 
   # Public: Adds a Listener that triggers when anyone leaves the room.
   #
+  # options  - An Object of additional parameters keyed on extension name
+  #            (optional).
   # callback - A Function that is called with a Response object.
   #
   # Returns nothing.
-  leave: (callback) ->
+  leave: (options, callback) ->
     @listeners.push new Listener(
       @,
       ((msg) -> msg instanceof LeaveMessage),
+      options,
       callback
     )
 
   # Public: Adds a Listener that triggers when anyone changes the topic.
   #
+  # options  - An Object of additional parameters keyed on extension name
+  #            (optional).
   # callback - A Function that is called with a Response object.
   #
   # Returns nothing.
-  topic: (callback) ->
+  topic: (options, callback) ->
     @listeners.push new Listener(
       @,
       ((msg) -> msg instanceof TopicMessage),
+      options,
       callback
     )
 
@@ -182,15 +191,24 @@ class Robot
 
   # Public: Adds a Listener that triggers when no other text matchers match.
   #
+  # options  - An Object of additional parameters keyed on extension name
+  #            (optional).
   # callback - A Function that is called with a Response object.
   #
   # Returns nothing.
-  catchAll: (callback) ->
-    @listeners.push new Listener(
+  catchAll: (options, callback) ->
+    listener = new Listener(
       @,
       ((msg) -> msg instanceof CatchAllMessage),
-      ((msg) -> msg.message = msg.message.message; callback msg)
+      options,
+      callback
     )
+
+    # Wrap the Listener callback
+    callback = listener.callback
+    listener.callback = ((msg) -> msg.message = msg.message.message; callback msg)
+
+    @listeners.push listener
 
   # Public: Registers new middleware for execution after matching but before
   # Listener callbacks
