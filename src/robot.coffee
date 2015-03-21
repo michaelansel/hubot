@@ -193,12 +193,18 @@ class Robot
   #
   # Returns nothing.
   catchAll: (options, callback) ->
-    @listeners.push new Listener(
+    listener = new Listener(
       @,
       ((msg) -> msg instanceof CatchAllMessage),
       options,
-      ((msg) -> msg.message = msg.message.message; callback msg)
+      callback
     )
+
+    # Wrap the Listener callback
+    callback = listener.callback
+    listener.callback = ((msg) -> msg.message = msg.message.message; callback msg)
+
+    @listeners.push listener
 
   # Public: Passes the given message to any interested Listeners.
   #
