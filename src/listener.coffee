@@ -83,8 +83,8 @@ class Listener
       )
       true
     else
+      # No, we didn't try to execute the listener callback
       if cb?
-        # No, we didn't try to execute the listener callback
         process.nextTick -> cb false
       false
 

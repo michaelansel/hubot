@@ -73,14 +73,14 @@ describe 'Listener', ->
             expect(listenerCallback).to.have.been.called
             done()
 
-
-        it 'returns true', () ->
+        it 'returns true', ->
           listenerCallback = sinon.spy()
           testMatcher = sinon.stub().returns(true)
           testMessage = {}
 
           testListener = new Listener(@robot, testMatcher, listenerCallback)
           result = testListener.call testMessage
+
           expect(result).to.be.ok
 
         it 'calls the provided callback with true', (done) ->
@@ -228,13 +228,14 @@ describe 'Listener', ->
             done()
 
 
-        it 'returns false', () ->
+        it 'returns false', ->
           listenerCallback = sinon.spy()
           testMatcher = sinon.stub().returns(false)
           testMessage = {}
 
           testListener = new Listener(@robot, testMatcher, listenerCallback)
           result = testListener.call testMessage
+
           expect(result).to.not.be.ok
 
         it 'calls the provided callback with false', (done) ->
@@ -303,21 +304,21 @@ describe 'Listener', ->
           testMessage = new TextMessage(@user, 'test')
           testMessage.match = sinon.stub().returns(true)
           testRegex = /test/
- 
+
           testListener = new TextListener(@robot, testRegex, callback)
           result = testListener.matcher(testMessage)
- 
+
           expect(result).to.be.ok
           expect(testMessage.match).to.have.been.calledWith(testRegex)
- 
+
         it 'does not match EnterMessages', ->
           callback = sinon.spy()
           testMessage = new EnterMessage(@user)
           testMessage.match = sinon.stub().returns(true)
           testRegex = /test/
- 
+
           testListener = new TextListener(@robot, testRegex, callback)
           result = testListener.matcher(testMessage)
- 
+
           expect(result).to.not.be.ok
           expect(testMessage.match).to.not.have.been.called
