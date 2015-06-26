@@ -30,6 +30,7 @@ mockery.disable()
 describe 'Robot', ->
   beforeEach ->
     @robot = new Robot null, 'mock-adapter', yes, 'TestHubot'
+    @robot.alias = 'Hubot'
     @robot.run
 
     # Re-throw AssertionErrors for clearer test failures
@@ -79,6 +80,66 @@ describe 'Robot', ->
         @robot.globalHttpOptions = {agent: agentA}
         httpClient = @robot.http('http://localhost', agent: agentB)
         expect(httpClient.options.agent).to.equal(agentB)
+
+    describe '#respondPattern', ->
+      it 'matches messages starting with robot\'s name', ->
+        testMessage = @robot.name + 'message123'
+        testRegex   = /(.*)/
+
+        pattern = @robot.respondPattern testRegex
+        expect(testMessage).to.match(pattern)
+        match = testMessage.match(pattern)[1]
+        expect(match).to.equal('message123')
+
+      it 'matches messages starting with robot\'s alias', ->
+        testMessage = @robot.alias + 'message123'
+        testRegex   = /(.*)/
+
+        pattern = @robot.respondPattern testRegex
+        expect(testMessage).to.match(pattern)
+        match = testMessage.match(pattern)[1]
+        expect(match).to.equal('message123')
+
+      it 'does not match unaddressed messages', ->
+        testMessage = 'message123'
+        testRegex   = /(.*)/
+
+        pattern = @robot.respondPattern testRegex
+        expect(testMessage).to.not.match(pattern)
+
+      it 'matches properly when name is substring of alias', ->
+        @robot.name  = 'Meg'
+        @robot.alias = 'Megan'
+        testMessage1 = @robot.name  + ' message123'
+        testMessage2 = @robot.alias + ' message123'
+        testRegex = /(.*)/
+
+        pattern = @robot.respondPattern testRegex
+
+        expect(testMessage1).to.match(pattern)
+        match1 = testMessage1.match(pattern)[1]
+        expect(match1).to.equal('message123')
+
+        expect(testMessage2).to.match(pattern)
+        match2 = testMessage2.match(pattern)[1]
+        expect(match2).to.equal('message123')
+
+      it 'matches properly when alias is substring of name', ->
+        @robot.name  = 'Megan'
+        @robot.alias = 'Meg'
+        testMessage1 = @robot.name  + ' message123'
+        testMessage2 = @robot.alias + ' message123'
+        testRegex = /(.*)/
+
+        pattern = @robot.respondPattern testRegex
+
+        expect(testMessage1).to.match(pattern)
+        match1 = testMessage1.match(pattern)[1]
+        expect(match1).to.equal('message123')
+
+        expect(testMessage2).to.match(pattern)
+        match2 = testMessage2.match(pattern)[1]
+        expect(match2).to.equal('message123')
 
     describe '#hear', ->
       it 'registers a new listener', ->

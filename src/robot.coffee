@@ -95,6 +95,15 @@ class Robot
   #
   # Returns nothing.
   respond: (regex, options, callback) ->
+    @listeners.push new TextListener(@, @respondPattern(regex), options, callback)
+
+  # Private: Build a regular expression that matches messages addressed
+  # directly to the robot
+  #
+  # regex - A RegExp for the message part that follows the robot's name/alias
+  #
+  # Returns RegExp.
+  respondPattern: (regex) ->
     re = regex.toString().split('/')
     re.shift()
     modifiers = re.pop()
@@ -109,8 +118,9 @@ class Robot
 
     if @alias
       alias = @alias.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+      [a,b] = if name.length > alias.length then [name,alias] else [alias,name]
       newRegex = new RegExp(
-        "^\\s*[@]?(?:#{alias}[:,]?|#{name}[:,]?)\\s*(?:#{pattern})"
+        "^\\s*[@]?(?:#{a}[:,]?|#{b}[:,]?)\\s*(?:#{pattern})"
         modifiers
       )
     else
@@ -119,7 +129,7 @@ class Robot
         modifiers
       )
 
-    @listeners.push new TextListener(@, newRegex, options, callback)
+    newRegex
 
   # Public: Adds a Listener that triggers when anyone enters the room.
   #
