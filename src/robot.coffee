@@ -51,6 +51,7 @@ class Robot
     @listeners  = []
     @middleware =
       listener: new Middleware(@)
+      receive: new Middleware(@)
     @logger     = new Log process.env.HUBOT_LOG_LEVEL or 'info'
     @pingIntervalId = null
     @globalHttpOptions = {}
@@ -237,7 +238,8 @@ class Robot
     @middleware.listener.register middleware
     return undefined
 
-  # Public: Passes the given message to any interested Listeners.
+  # Public: Passes the given message to any interested Middleware and
+  # Listeners.
   #
   # message - A Message instance. Listeners can flag this message as 'done' to
   #           prevent further execution.
@@ -247,6 +249,24 @@ class Robot
   # Returns nothing.
   # Returns before executing callback
   receive: (message, cb) ->
+    @middleware.receive.execute(
+      {message: message}
+      @processListeners.bind this
+      cb
+    )
+
+  # Private: Passes the given message to any interested Listeners.
+  #
+  # context.message - A Message instance. Listeners can flag this message as
+  #                   'done' to prevent further execution.
+  #
+  # cb - Optional callback that is called when message processing is complete
+  #
+  # Returns nothing.
+  # Returns before executing callback
+  processListeners: (context, cb) ->
+    message = context.message
+
     # Try executing all registered Listeners in order of registration
     # and return after message is done being processed
     anyListenersExecuted = false
